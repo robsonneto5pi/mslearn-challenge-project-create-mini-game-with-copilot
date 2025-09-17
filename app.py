@@ -1,4 +1,27 @@
 import random
+import os
+
+# Caminho do arquivo de placar
+score_file = "score.txt"
+
+# Função para carregar o placar do arquivo
+def load_score():
+    if os.path.exists(score_file):
+        with open(score_file, "r") as file:
+            lines = file.readlines()
+            if len(lines) == 2:
+                try:
+                    rounds = int(lines[0].strip())
+                    wins = int(lines[1].strip())
+                    return rounds, wins
+                except ValueError:
+                    pass
+    return 0, 0
+
+# Função para salvar o placar no arquivo
+def save_score(rounds, wins):
+    with open(score_file, "w") as file:
+        file.write(f"{rounds}\n{wins}\n")
 
 # Função para obter a escolha aleatória do computador
 def get_computer_choice():
@@ -25,8 +48,8 @@ def determine_winner(user, computer):
 
 # Função principal do jogo
 def play_game():
-    rounds = 0
-    wins = 0
+    rounds, wins = load_score()
+    print(f"Placar atual: {rounds} rodadas jogadas, {wins} vitórias.")
 
     while True:
         user_choice = None
@@ -42,6 +65,8 @@ def play_game():
         rounds += 1
         if result == "Você venceu!":
             wins += 1
+
+        save_score(rounds, wins)
 
         play_again = input("Deseja jogar novamente? (s/n): ").lower()
         if play_again != "s":
